@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, Input, Row, Col, Button} from 'antd'
+import {message, Card, Input, Row, Col, Button} from 'antd'
 import axios from 'axios';
 
 import './styles.scss'
@@ -9,7 +9,8 @@ class ThreeSpeakSettingsCard extends React.Component {
     super(props)
     this.state = {
       threespeakServer: "rtmp://rtmp.3speak.online/LiveApp",
-      threespeakKey: ''
+      threespeakKey: '',
+      loading: false
     }
 
     this.onChangeKey = this.onChangeKey.bind(this)
@@ -25,12 +26,25 @@ class ThreeSpeakSettingsCard extends React.Component {
   onSaveSettings(e) {
     e.preventDefault()
 
+    this.setState({
+      loading: true
+    })
+
     axios.post(`${process.env.REACT_APP_API_ENDPOINT}/save`, {
       service: 'threespeak',
       key: this.state.threespeakKey,
     }).then((res) => {
-      console.log(res)
-    }).catch((err) => console.log(err))
+      message.success('Saved!')
+      this.setState({
+        loading: false
+      })
+    }).catch((err) => {
+      message.error('Something went wrong!')
+      this.setState({
+        loading: false
+      })
+      console.log(err)
+    })
   }
 
   render() {
